@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.put
 import kotlinx.serialization.Serializable
-import lidonis.fr.circuitbearker.domain.Bears
+import lidonis.fr.circuitbearker.domain.BearsServices
 import lidonis.fr.circuitbearker.domain.BearsUseCases.CreateCommand
 import lidonis.fr.circuitbearker.domain.model.Bear
 import lidonis.fr.circuitbearker.plugins.BearsResource.BearBody
@@ -26,11 +26,11 @@ class BearsResource {
     data class BearRequest(val name: String)
 
     @Serializable
-    data class BearBody(val id: String, val name: String)
+    data class BearBody(val id: String, val name: String, val state: String)
 
     @Serializable
     @Resource("{id}")
-    class Id(val parent: BearsResource, val id: String) {
+    class Id(val parent: BearsResource = BearsResource(), val id: String) {
 
         @Serializable
         @Resource("hibernate")
@@ -38,23 +38,23 @@ class BearsResource {
     }
 }
 
-fun Application.configureRouting() {
+fun Application.configureRouting(bearsServices: BearsServices) {
     install(Resources)
 
     routing {
         post<BearsResource> {
             val bearRequest = call.receive<BearRequest>()
-            val bear = Bears.create(CreateCommand(bearRequest.name))
+            val bear = bearsServices.create(CreateCommand(bearRequest.name))
             call.response.headers.append(HttpHeaders.Location, "/bears/${bear.id.value}")
             call.respond(
                 status = HttpStatusCode.Created,
-                BearBody(id = bear.id.value.toString(), name = bear.name)
+                message = bear.toBearBody()
             )
         }
 
         get<Id> { bearId ->
-            val bear = Bears.retrieve(Bear.BearId(UUID.fromString(bearId.id))) ?: error("No bear")
-            call.respond(BearBody(id = bear.id.value.toString(), name = bear.name))
+            val bear = bearsServices.retrieve(Bear.BearId(UUID.fromString(bearId.id))) ?: error("No bear")
+            call.respond(bear.toBearBody())
         }
 
         put<Id.Hibernate> { status ->
@@ -62,3 +62,9 @@ fun Application.configureRouting() {
         }
     }
 }
+
+private fun Bear.toBearBody() = BearBody(
+    id = id.value.toString(),
+    name = name,
+    state = state
+)

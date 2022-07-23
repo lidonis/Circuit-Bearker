@@ -11,19 +11,26 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkStatic
+import lidonis.fr.circuitbearker.domain.BearsServices
+import lidonis.fr.circuitbearker.domain.model.Bear
+import lidonis.fr.circuitbearker.persitence.InMemoryBearRepository
 import lidonis.fr.circuitbearker.plugins.BearsResource
+import lidonis.fr.circuitbearker.plugins.configureRouting
+import lidonis.fr.circuitbearker.plugins.configureSerialization
 import java.util.*
+
+const val FIXED_UUID = "2f87befc-6899-4791-bb92-3a5e037bcfa4"
 
 class ApplicationKtTest : ShouldSpec({
 
     should("create a bear") {
         testApplication {
             mockkStatic(UUID::randomUUID)
-            val fixedUUID = "2f87befc-6899-4791-bb92-3a5e037bcfa4"
-            every { UUID.randomUUID() } returns UUID.fromString(fixedUUID)
+            every { UUID.randomUUID() } returns UUID.fromString(FIXED_UUID)
 
             val response = httpClient().post(BearsResource()) {
                 contentType(ContentType.Application.Json)
@@ -32,14 +39,39 @@ class ApplicationKtTest : ShouldSpec({
 
             assertSoftly {
                 response shouldHaveStatus HttpStatusCode.Created
-                response.shouldHaveHeader(HttpHeaders.Location, value = "/bears/$fixedUUID")
+                response.shouldHaveHeader(HttpHeaders.Location, value = "/bears/$FIXED_UUID")
                 val body = response.bodyAsText()
-                body.shouldContainJsonKeyValue("$.id", fixedUUID)
+                body.shouldContainJsonKeyValue("$.id", FIXED_UUID)
                 body.shouldContainJsonKeyValue("$.name", "Baloo")
+                body.shouldContainJsonKeyValue("$.state", "Awake")
             }
         }
     }
 
+    should("get new bear") {
+        val bearRepository = InMemoryBearRepository()
+        val bear = Bear.create("Baloo")
+        bearRepository.save(bear)
+        testApplication {
+            environment {
+                config = ApplicationConfig("application-custom.conf")
+            }
+            application {
+                configureRouting(BearsServices(bearRepository))
+                configureSerialization()
+            }
+
+            val response = httpClient().get(BearsResource.Id(id = bear.id.value.toString()))
+
+            assertSoftly {
+                response shouldHaveStatus HttpStatusCode.OK
+                val body = response.bodyAsText()
+                body.shouldContainJsonKeyValue("$.id", bear.id.value.toString())
+                body.shouldContainJsonKeyValue("$.name", bear.name)
+                body.shouldContainJsonKeyValue("$.state", "Awake")
+            }
+        }
+    }
 })
 
 private fun ApplicationTestBuilder.httpClient() = createClient {
