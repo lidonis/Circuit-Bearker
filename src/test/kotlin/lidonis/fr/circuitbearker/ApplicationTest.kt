@@ -23,7 +23,7 @@ class ApplicationTest {
 
         response.apply {
             assertEquals(HttpStatusCode.Created, status)
-            assertContains(bodyAsText(),"Baloo")
+            assertContains(bodyAsText(), "Baloo")
         }
     }
 
