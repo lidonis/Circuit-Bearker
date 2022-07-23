@@ -11,10 +11,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.put
 import kotlinx.serialization.Serializable
-import lidonis.fr.circuitbearker.domain.Bear
 import lidonis.fr.circuitbearker.domain.Bears
 import lidonis.fr.circuitbearker.domain.BearsUseCases.CreateCommand
-import lidonis.fr.circuitbearker.plugins.BearsResource.*
+import lidonis.fr.circuitbearker.domain.model.Bear
+import lidonis.fr.circuitbearker.plugins.BearsResource.BearBody
+import lidonis.fr.circuitbearker.plugins.BearsResource.BearRequest
+import lidonis.fr.circuitbearker.plugins.BearsResource.Id
 import java.util.*
 
 @Serializable
