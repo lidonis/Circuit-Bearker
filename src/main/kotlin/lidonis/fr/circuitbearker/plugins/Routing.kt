@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.put
 import kotlinx.serialization.Serializable
-import lidonis.fr.circuitbearker.domain.BearsServices
+import lidonis.fr.circuitbearker.domain.BearsUseCases
 import lidonis.fr.circuitbearker.domain.BearsUseCases.CreateCommand
 import lidonis.fr.circuitbearker.domain.model.Bear
 import lidonis.fr.circuitbearker.plugins.BearsResource.BearBody
@@ -34,17 +34,17 @@ class BearsResource {
 
         @Serializable
         @Resource("hibernate")
-        class Hibernate(val parent: BearsResource.Id, val id: String)
+        class Hibernate(val parent: Id, val id: String)
     }
 }
 
-fun Application.configureRouting(bearsServices: BearsServices) {
+fun Application.configureRouting(bearsUseCases: BearsUseCases) {
     install(Resources)
 
     routing {
         post<BearsResource> {
             val bearRequest = call.receive<BearRequest>()
-            val bear = bearsServices.create(CreateCommand(bearRequest.name))
+            val bear = bearsUseCases.create(CreateCommand(bearRequest.name))
             call.response.headers.append(HttpHeaders.Location, "/bears/${bear.id.value}")
             call.respond(
                 status = HttpStatusCode.Created,
@@ -53,7 +53,7 @@ fun Application.configureRouting(bearsServices: BearsServices) {
         }
 
         get<Id> { bearId ->
-            val bear = bearsServices.retrieve(Bear.BearId(UUID.fromString(bearId.id))) ?: error("No bear")
+            val bear = bearsUseCases.retrieve(Bear.BearId(UUID.fromString(bearId.id))) ?: error("No bear")
             call.respond(bear.toBearBody())
         }
 
