@@ -1,9 +1,12 @@
 package lidonis.fr.circuitbearker.domain.model
 
+import java.time.OffsetDateTime
+import java.time.OffsetDateTime.now
 import java.util.*
 import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 
-interface Bear {
+sealed interface Bear {
     val id: BearId
     val name: String
     val state: String
@@ -26,7 +29,14 @@ interface Bear {
         override val name: String,
         val duration: Duration,
     ) : Bear {
-        override val state = "Hibernate"
+        private val hibernateUntil: OffsetDateTime = now() + duration.toJavaDuration()
+
+        override val state: String
+            get() = if (now() >= hibernateUntil) {
+                "Out of Hibernation"
+            } else {
+                "Hibernate"
+            }
     }
 
 

@@ -15,13 +15,16 @@ import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkStatic
+import kotlinx.coroutines.delay
 import lidonis.fr.circuitbearker.domain.BearsServices
 import lidonis.fr.circuitbearker.domain.model.Bear
 import lidonis.fr.circuitbearker.persitence.InMemoryBearRepository
 import lidonis.fr.circuitbearker.plugins.BearsResource
+import lidonis.fr.circuitbearker.plugins.BearsResource.Id
 import lidonis.fr.circuitbearker.plugins.configureRouting
 import lidonis.fr.circuitbearker.plugins.configureSerialization
 import java.util.*
+import kotlin.time.Duration.Companion.seconds
 
 const val FIXED_UUID = "2f87befc-6899-4791-bb92-3a5e037bcfa4"
 
@@ -49,19 +52,12 @@ class ApplicationKtTest : ShouldSpec({
     }
 
     should("get new bear") {
-        val bearRepository = InMemoryBearRepository()
-        val bear = Bear.create("Baloo")
-        bearRepository.save(bear)
         testApplication {
-            environment {
-                config = ApplicationConfig("application-custom.conf")
-            }
-            application {
-                configureRouting(BearsServices(bearRepository))
-                configureSerialization()
-            }
+            val (bearRepository, bear) = initBearRepo("Baloo")
 
-            val response = httpClient().get(BearsResource.Id(id = bear.id.value.toString()))
+            initApp(bearRepository)
+
+            val response = httpClient().get(bear.toIdResource())
 
             assertSoftly {
                 response shouldHaveStatus HttpStatusCode.OK
@@ -72,7 +68,51 @@ class ApplicationKtTest : ShouldSpec({
             }
         }
     }
+
+    should("hibernate a bear") {
+        testApplication {
+            val (bearRepository, bear) = initBearRepo("Jojo")
+
+            initApp(bearRepository)
+
+            val idResource = bear.toIdResource()
+            var response = httpClient().put(Id.Status(idResource)) {
+                contentType(ContentType.Application.Json)
+                setBody(Id.StatusRequest("hibernate"))
+            }
+            response shouldHaveStatus HttpStatusCode.OK
+
+            response = httpClient().get(idResource)
+            response shouldHaveStatus HttpStatusCode.ServiceUnavailable
+
+
+            delay(2.seconds)
+            response = httpClient().get(idResource)
+            response shouldHaveStatus HttpStatusCode.OK
+        }
+    }
+
+
 })
+
+private fun Bear.toIdResource() = Id(id = id.value.toString())
+
+private fun initBearRepo(bearName: String): Pair<InMemoryBearRepository, Bear> {
+    val bearRepository = InMemoryBearRepository()
+    val bear = Bear.create(bearName)
+    bearRepository.save(bear)
+    return Pair(bearRepository, bear)
+}
+
+private fun ApplicationTestBuilder.initApp(bearRepository: InMemoryBearRepository) {
+    environment {
+        config = ApplicationConfig("application-custom.conf")
+    }
+    application {
+        configureRouting(BearsServices(bearRepository))
+        configureSerialization()
+    }
+}
 
 private fun ApplicationTestBuilder.httpClient() = createClient {
     install(Resources)
