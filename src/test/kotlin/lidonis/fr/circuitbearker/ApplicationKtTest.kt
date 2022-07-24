@@ -62,7 +62,7 @@ class ApplicationKtTest : ShouldSpec({
             assertSoftly {
                 response shouldHaveStatus HttpStatusCode.OK
                 val body = response.bodyAsText()
-                body.shouldContainJsonKeyValue("$.id", bear.id.value.toString())
+                body.shouldContainJsonKeyValue("$.id", bear.id.toString())
                 body.shouldContainJsonKeyValue("$.name", bear.name)
                 body.shouldContainJsonKeyValue("$.state", "Awake")
             }
@@ -95,7 +95,7 @@ class ApplicationKtTest : ShouldSpec({
 
 })
 
-private fun Bear.toIdResource() = Id(id = id.value.toString())
+private fun Bear.toIdResource() = Id(id = id.toString())
 
 private fun initBearRepo(bearName: String): Pair<InMemoryBearRepository, Bear> {
     val bearRepository = InMemoryBearRepository()

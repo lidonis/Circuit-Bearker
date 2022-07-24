@@ -12,13 +12,11 @@ sealed interface Bear {
     val state: String
 
     @JvmInline
-    value class BearId(val value: UUID = UUID.randomUUID()) {
-        constructor(uuidString: String) : this(UUID.fromString(uuidString))
+    value class BearId(private val value: String = UUID.randomUUID().toString()) {
+        override fun toString() = value
     }
 
     fun hibernate(duration: Duration): Bear = HibernateBear(id, name, duration)
-
-    fun wakeUp(): Bear = AwakeBear(id, name)
 
     private data class AwakeBear(override val id: BearId, override val name: String) : Bear {
         override val state = "Awake"

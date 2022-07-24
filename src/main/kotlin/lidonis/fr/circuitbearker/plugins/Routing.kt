@@ -17,7 +17,6 @@ import lidonis.fr.circuitbearker.domain.model.Bear
 import lidonis.fr.circuitbearker.plugins.BearsResource.BearRequest
 import lidonis.fr.circuitbearker.plugins.BearsResource.BearResponse
 import lidonis.fr.circuitbearker.plugins.BearsResource.Id
-import java.util.*
 
 @Serializable
 @Resource("/bears")
@@ -56,7 +55,7 @@ fun Application.configureRouting(bearsUseCases: BearsUseCases) {
         }
 
         get<Id> { bearId ->
-            val bear = bearsUseCases.retrieve(Bear.BearId(UUID.fromString(bearId.id)))
+            val bear = bearsUseCases.retrieve(Bear.BearId(bearId.id))
             when (bear.state) {
                 "Hibernate" -> call.respond(HttpStatusCode.ServiceUnavailable)
                 else -> call.respond(bear.toBearBody())
@@ -65,14 +64,14 @@ fun Application.configureRouting(bearsUseCases: BearsUseCases) {
 
         put<Id.Status> { status ->
             val statusRequest = call.receive<Id.StatusRequest>()
-            bearsUseCases.hibernate(Bear.BearId(UUID.fromString(status.parent.id)))
+            bearsUseCases.hibernate(Bear.BearId(status.parent.id))
             call.respondText("hibernate bear ${statusRequest.status}")
         }
     }
 }
 
 private fun Bear.toBearBody() = BearResponse(
-    id = id.value.toString(),
+    id = id.toString(),
     name = name,
     state = state
 )
@@ -80,4 +79,4 @@ private fun Bear.toBearBody() = BearResponse(
 private inline fun <reified T : Any> Application.path(resource: T) =
     URLBuilder().also { href(resource, it) }.build().encodedPath
 
-private fun Bear.BearId.toResource() = Id(id = this.value.toString())
+private fun Bear.BearId.toResource() = Id(id = this.toString())

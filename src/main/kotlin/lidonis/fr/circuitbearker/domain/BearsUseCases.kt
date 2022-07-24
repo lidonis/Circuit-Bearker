@@ -1,7 +1,7 @@
 package lidonis.fr.circuitbearker.domain
 
 import lidonis.fr.circuitbearker.domain.model.Bear
-import lidonis.fr.circuitbearker.persitence.InMemoryBearRepository
+import lidonis.fr.circuitbearker.persitence.BearRepository
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -14,15 +14,14 @@ interface BearsUseCases {
     fun hibernate(id: Bear.BearId)
 }
 
-class BearsServices(private val bearRepository: InMemoryBearRepository) : BearsUseCases {
+class BearsServices(private val bearRepository: BearRepository) : BearsUseCases {
 
     override fun create(command: BearsUseCases.CreateCommand) =
         Bear.create(command.name)
             .also(bearRepository::save)
 
     override fun retrieve(id: Bear.BearId) =
-        bearRepository.getById(id)
-            ?: error("Nor bear")
+        bearRepository.getById(id) ?: error("Nor bear")
 
     override fun hibernate(id: Bear.BearId) =
         retrieve(id)
