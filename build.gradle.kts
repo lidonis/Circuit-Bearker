@@ -1,15 +1,16 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-val resilience4j_version: String by project
-val kotest_version: String by project
-val kotest_ktor_version: String by project
-val mockk_version: String by project
+@file:Suppress("PropertyName")
+
+val ktor_version = "2.0.3"
+val logback_version = "1.2.11"
+val resilience4j_version = "1.7.1"
+val kotest_version = "5.3.2"
+val kotest_ktor_version = "1.0.3"
+val mockk_version = "1.12.4"
 
 plugins {
     application
-    kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
 }
 
 group = "lidonis.fr"
