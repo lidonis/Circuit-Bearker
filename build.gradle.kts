@@ -10,7 +10,7 @@ val mockk_version = "1.13.2"
 plugins {
     application
     kotlin("jvm") version "1.7.20"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.21"
 }
 
 group = "lidonis.fr"
