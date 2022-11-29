@@ -26,6 +26,12 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
+    }
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
