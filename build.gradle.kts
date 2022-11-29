@@ -9,7 +9,7 @@ val mockk_version = "1.13.2"
 
 plugins {
     application
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.22"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
 }
 
