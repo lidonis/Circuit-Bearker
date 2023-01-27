@@ -5,7 +5,7 @@ val logback_version = "1.4.5"
 val resilience4j_version = "2.0.2"
 val kotest_version = "5.5.4"
 val kotest_ktor_version = "1.0.3"
-val mockk_version = "1.13.3"
+val mockk_version = "1.13.4"
 
 plugins {
     application
