@@ -1,6 +1,6 @@
 @file:Suppress("PropertyName")
 
-val ktor_version = "2.3.5"
+val ktor_version = "2.3.6"
 val logback_version = "1.4.11"
 val resilience4j_version = "2.1.0"
 val kotest_version = "5.8.0"
