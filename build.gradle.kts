@@ -2,7 +2,7 @@
 
 val ktor_version = "2.3.5"
 val logback_version = "1.4.11"
-val resilience4j_version = "2.0.2"
+val resilience4j_version = "2.1.0"
 val kotest_version = "5.8.0"
 val kotest_ktor_version = "2.0.0"
 val mockk_version = "1.13.8"
