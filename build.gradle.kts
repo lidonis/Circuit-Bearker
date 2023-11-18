@@ -1,6 +1,3 @@
-@file:Suppress("PropertyName")
-
-
 group = "fr.lidonis.circuitbearker"
 version = "0.0.1"
 
@@ -9,13 +6,18 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
-
-allprojects {
+subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     repositories {
         mavenCentral()
+    }
+
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(rootProject.libs.versions.jdk.get().toInt()))
+        }
     }
 
     tasks.withType<Test>().configureEach {

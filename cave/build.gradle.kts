@@ -10,12 +10,6 @@ application {
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-kotlin {
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(libs.versions.jdk.get().toInt()))
-  }
-}
-
 dependencies {
   implementation(project(":common"))
   implementation(libs.bundles.ktor.server)
