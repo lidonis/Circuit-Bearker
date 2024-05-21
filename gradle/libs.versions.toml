@@ -1,6 +1,6 @@
 [versions]
 jdk = "17"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 ktor = "2.3.10"
 kotest = "5.8.1"
 detekt = "1.23.6"
