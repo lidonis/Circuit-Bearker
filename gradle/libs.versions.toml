@@ -3,7 +3,7 @@ jdk = "17"
 kotlin = "2.0.0"
 ktor = "2.3.12"
 kotest = "5.9.1"
-detekt = "1.23.6"
+detekt = "1.23.7"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
