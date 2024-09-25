@@ -26,7 +26,7 @@ ktor-resources = { module = "io.ktor:ktor-resources", version.ref = "ktor" }
 ktor-server-tests-jvm = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
 
 logback = "ch.qos.logback:logback-classic:1.5.8"
-junit-jupiter-engine = "org.junit.jupiter:junit-jupiter-engine:5.10.3"
+junit-jupiter-engine = "org.junit.jupiter:junit-jupiter-engine:5.11.1"
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 
 ### Kotest
