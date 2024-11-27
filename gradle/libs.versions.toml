@@ -1,7 +1,7 @@
 [versions]
 jdk = "17"
 kotlin = "2.0.21"
-ktor = "2.3.12"
+ktor = "2.3.13"
 kotest = "5.9.1"
 detekt = "1.23.7"
 
