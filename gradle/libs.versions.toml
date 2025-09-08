@@ -2,7 +2,7 @@
 jdk = "17"
 kotlin = "2.1.20"
 ktor = "2.3.13"
-kotest = "5.9.1"
+kotest = "6.0.3"
 detekt = "1.23.8"
 
 [plugins]
